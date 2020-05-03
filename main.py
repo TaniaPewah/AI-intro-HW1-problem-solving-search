@@ -96,6 +96,8 @@ def toy_map_problem_experiments():
     print()
     print('Solve the map problem.')
 
+    # Ex.8
+    # TODO: Just run it and inspect the printed result.
     toy_map_problem = MapProblem(streets_map, 54, 549)
     uc = UniformCost()
     res = uc.solve_problem(toy_map_problem)
