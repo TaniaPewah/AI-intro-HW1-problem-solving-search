@@ -45,7 +45,8 @@ class AStar(BestFirstSearch):
         Should calculate and return the f-score of the given node.
         This score is used as a priority of this node in the open priority queue.
         """
-        return ((1-heuristic_weight) * search_node.g_cost) + (heuristic_weight * self.heuristic_function)
+        h_cost = self.heuristic_function.estimate(search_node.state)
+        return ((1-self.heuristic_weight) * search_node.g_cost) + (self.heuristic_weight * h_cost)
 
     def _open_successor_node(self, problem: GraphProblem, successor_node: SearchNode):
         """
@@ -66,7 +67,19 @@ class AStar(BestFirstSearch):
         Remember: In A*, in contrast to uniform-cost, a successor state might have an already closed node,
                   but still could be improved.
         """
-        
-        self.open.push_node(successor_node)
+        # successor in open
+        if self.open.has_state(successor_node.state):
+            existing_node = self.open.get_node_by_state(successor_node.state)
+            if successor_node.g_cost < existing_node.g_cost:
+                self.open.extract_node(existing_node)
+                self.open.push_node(successor_node)
 
-        raise NotImplementedError  # TODO: remove this line!
+        # successor in closed
+        elif self.close.has_state(successor_node.state):
+            existing_node = self.close.get_node_by_state(successor_node.state)
+            if successor_node.g_cost < existing_node.g_cost:
+                self.close.remove_node(successor_node)
+                self.open.push_node(successor_node)
+
+        else:
+            self.open.push_node(successor_node)
