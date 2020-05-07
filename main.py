@@ -77,7 +77,9 @@ def run_astar_for_weights_in_range(heuristic_type: HeuristicFunctionType, proble
     # TODO [Ex.12]:
     #  1. Create an array of `n` numbers equally spread in the segment
     #     [low_heuristic_weight, high_heuristic_weight]
-    #     (including the edges). You can use `np.linspace()` for that.
+    
+    numbers_array = np.linspace(low_heuristic_weight, high_heuristic_weight, n)
+    
     #  2. For each weight in that array run the wA* algorithm, with the
     #     given `heuristic_type` over the given problem. For each such run,
     #     if a solution has been found (res.is_solution_found), store the
@@ -87,9 +89,25 @@ def run_astar_for_weights_in_range(heuristic_type: HeuristicFunctionType, proble
     #     for the costs, list for the #expanded and list for the weights).
     #     These lists should be of the same size when this operation ends.
     #     Don't forget to pass `max_nr_states_to_expand` to the AStar c'tor.
+    
+    g_costs = []
+    nr_states = []
+    weights = []
+    
+    for i in numbers_array:
+        weighted_a_star = AStar(heuristic_type, i, max_nr_states_to_expand)
+        res = weighted_a_star.solve_problem(problem)
+        if res.is_solution_found:
+            g_costs.append(res.solution_g_cost)
+            nr_states.append(res.nr_expanded_states)
+            weights.append(i)
+        
+    
     #  3. Call the function `plot_distance_and_expanded_wrt_weight_figure()`
     #     with these 3 generated lists.
-    raise NotImplementedError  # TODO: remove this line!
+    
+    plot_distance_and_expanded_wrt_weight_figure(problem.name, weights, g_costs, nr_states)
+    
 
 
 def toy_map_problem_experiments():
@@ -108,8 +126,6 @@ def toy_map_problem_experiments():
     print(res)
 
     # Ex.11
-    # TODO: create an instance of `AStar` with the `AirDistHeuristic`,
-    #       solve the same `toy_map_problem` with it and print the results (as before).
     a_star = AStar(AirDistHeuristic)
     res = a_star.solve_problem(toy_map_problem)
     print(res)
@@ -123,7 +139,7 @@ def toy_map_problem_experiments():
     #     (upper in this file).
     #  3. Call here the function `run_astar_for_weights_in_range()`
     #     with `AirDistHeuristic` and `toy_map_problem`.
-    exit()  # TODO: remove!
+    run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
 
 
 # --------------------------------------------------------------------
