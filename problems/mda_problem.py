@@ -73,12 +73,12 @@ class MDAState(GraphProblemState):
         """
         assert isinstance(other, MDAState)
 
-        # TODO [Ex.13]: Complete the implementation of this method!
-        #  Note that you can simply compare two instances of `Junction` type
-        #   (using equals `==` operator) because the class `Junction` explicitly
-        #   implements the `__eq__()` method. The types `frozenset`, `ApartmentWithSymptomsReport`, `Laboratory`
-        #   are also comparable (in the same manner).
-        raise NotImplementedError  # TODO: remove this line.
+        # [Ex.13]:
+        return (self.current_site == other.current_site and
+            self.tests_on_ambulance == other.tests_on_ambulance and
+            self.tests_transferred_to_lab == other.tests_transferred_to_lab and
+            self.nr_matoshim_on_ambulance == other.nr_matoshim_on_ambulance and
+            self.visited_labs == other.visited_labs)
 
     def __hash__(self):
         """
@@ -93,14 +93,9 @@ class MDAState(GraphProblemState):
     def get_total_nr_tests_taken_and_stored_on_ambulance(self) -> int:
         """
         This method returns the total number of of tests that are stored on the ambulance in this state.
-        TODO [Ex.13]: Implement this method.
-         Notice that this method can be implemented using a single line of code - do so!
-         Use python's built-it `sum()` function.
-         Notice that `sum()` can receive an *ITERATOR* as argument; That is, you can simply write something like this:
-        >>> sum(<some expression using item> for item in some_collection_of_items)
+        [Ex.13]:
         """
-        raise NotImplementedError  # TODO: remove this line.
-
+        return sum(test.ApartmentWithSymptomsReport.roommates for test in self.tests_on_ambulance)
 
 class MDAOptimizationObjective(Enum):
     Distance = 'Distance'
@@ -212,11 +207,9 @@ class MDAProblem(GraphProblem):
         Calculates the operator cost (of type `MDACost`) of an operator (moving from the `prev_state`
          to the `succ_state`. The `MDACost` type is defined above in this file (with explanations).
         Use the formal MDA problem's operator costs definition presented in the assignment-instructions.
-        TODO [Ex.13]: implement this method!
-        Use the method `self.map_distance_finder.get_map_cost_between()` to calculate the distance
-         between to junctions.
+        [Ex.13]:
         """
-        raise NotImplementedError  # TODO: remove this line!
+        return self.map_distance_finder.get_map_cost_between(prev_state.current_location, succ_state.current_location)
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
@@ -240,14 +233,9 @@ class MDAProblem(GraphProblem):
     def get_reported_apartments_waiting_to_visit(self, state: MDAState) -> Set[ApartmentWithSymptomsReport]:
         """
         This method returns a set of all reported-apartments that haven't been visited yet.
-        TODO [Ex.13]: Implement this method.
-            Use sets difference operation (`some_set - some_other_set`).
-            Note: Given a collection of items, you can create a new set of these items simply by
-                `set(my_collection_of_items)`. Then you can use set operations over this newly
-                generated set.
-            Note: This method can be implemented using a single line of code. Try to do so.
+        [Ex.13]:
         """
-        raise NotImplementedError  # TODO: remove this line!
+        return set(set(state.problem_input.reported_apartments) - set(state.tests_on_ambulance))
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
