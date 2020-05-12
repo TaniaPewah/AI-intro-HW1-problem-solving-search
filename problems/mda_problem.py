@@ -200,7 +200,58 @@ class MDAProblem(GraphProblem):
         """
 
         assert isinstance(state_to_expand, MDAState)
+
+        # find the junction of the current state
+        junction_from = state_to_expand.current_location
+
+        # for every apartment waiting to be visited
+        for apartment in self.get_reported_apartments_waiting_to_visit():
+
+
+            # there is enough matoshim to test the apartment
+            new_matoshim = state_to_expand.nr_matoshim_on_ambulance - apartment.nr_roommates
+
+            # there is enough capacity
+            ambulance_capacity = self.problem_input.ambulance.taken_tests_storage_capacity
+            remaining_capacity = ambulance_capacity - state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance()
+            new_capacity = remaining_capacity - apartment.nr_roommates
+
+            # if the ambulance has enough matoshim for the number of roomates (CanVisit)
+            if new_matoshim >= 0 and new_capacity >= 0:
+
+                # build the params for state of after visiting the apartment
+                new_tests_on_ambulance = set(state_to_expand.tests_on_ambulance)
+                new_tests_on_ambulance.add(apartment)
+
+                # create the new successor state after visiting the apartment
+                successor_state = MDAState(apartment.location,
+                                           frozenset(new_tests_on_ambulance),
+                                           frozenset(state_to_expand.tests_transferred_to_lab),
+                                           new_matoshim,
+                                           state_to_expand.visited_labs)
+                # calculate the cost to get to it
+                visit_cost = self.get_operator_cost(state_to_expand, successor_state)
+
+        for lab in self.problem_input.laboratories:
+
+            tests_on_ambulance = state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance()
+
+            # check CanVisit for the current lab
+            if not state_to_expand.visited_labs.__contains__(lab) or tests_on_ambulance > 0:
+
+                # add the lab to visited labs
+
+                # calc the new transfered tests to labs
+
+                # calc the new matoshim taken from lab
+
+                # create the new successor state after visiting the apartment
+                # successor_state = MDAState(lab.location,
+
+                # calculate the cost to get to it
+                visit_cost = self.get_operator_cost(state_to_expand, successor_state)
         raise NotImplementedError  # TODO: remove this line!
+
 
     def get_operator_cost(self, prev_state: MDAState, succ_state: MDAState) -> MDACost:
         """
@@ -219,7 +270,10 @@ class MDAProblem(GraphProblem):
          In order to create a set from some other collection (list/tuple) you can just `set(some_other_collection)`.
         """
         assert isinstance(state, MDAState)
-        raise NotImplementedError  # TODO: remove the line!
+        all_patients = 0
+        for apt in self.problem_input.reported_apartments:
+            all_patients += apt.nr_roommates
+        return all_patients == state.tests_transferred_to_lab
 
     def get_zero_cost(self) -> Cost:
         """
@@ -235,7 +289,7 @@ class MDAProblem(GraphProblem):
         This method returns a set of all reported-apartments that haven't been visited yet.
         [Ex.13]:
         """
-        return set(set(state.problem_input.reported_apartments) - set(state.tests_on_ambulance))
+        return set(set(self.problem_input.reported_apartments) - set(state.tests_on_ambulance))
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """

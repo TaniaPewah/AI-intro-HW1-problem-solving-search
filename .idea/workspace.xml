@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="3a7e2ef8-cac2-44d9-b738-419aed95033f" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\tt\Documents\AI\AI_HW1\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectId" id="1bOtWCeAweCdyfRBh8Iei7JyS3Y" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager" selected="Python.asirim">
+    <configuration name="asirim" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI_HW1" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\tt\AppData\Local\Programs\Python\Python37\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../EconomyandLearning/hw2" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../EconomyandLearning/hw2/asirim.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="AI_HW1" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\tt\AppData\Local\Programs\Python\Python37\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.asirim" />
+        <item itemvalue="Python.main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3a7e2ef8-cac2-44d9-b738-419aed95033f" name="Default Changelist" comment="" />
+      <created>1588514997003</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1588514997003</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="925" y="244" key="#asirim" timestamp="1588611896319">
+      <screen x="0" y="0" width="2048" height="1112" />
+    </state>
+    <state x="925" y="244" key="#asirim/635.1440.1536.824/0.0.2048.1112@0.0.2048.1112" timestamp="1588611896319" />
+    <state x="763" y="171" key="#main" timestamp="1588515152380">
+      <screen x="0" y="0" width="2048" height="1112" />
+    </state>
+    <state x="763" y="171" key="#main/635.1440.1536.824/0.0.2048.1112@0.0.2048.1112" timestamp="1588515152380" />
+    <state width="2027" height="313" key="GridCell.Tab.0.bottom" timestamp="1588853924681">
+      <screen x="0" y="0" width="2048" height="1112" />
+    </state>
+    <state width="2027" height="313" key="GridCell.Tab.0.bottom/635.1440.1536.824/0.0.2048.1112@0.0.2048.1112" timestamp="1588853924681" />
+    <state width="2027" height="313" key="GridCell.Tab.0.center" timestamp="1588853924681">
+      <screen x="0" y="0" width="2048" height="1112" />
+    </state>
+    <state width="2027" height="313" key="GridCell.Tab.0.center/635.1440.1536.824/0.0.2048.1112@0.0.2048.1112" timestamp="1588853924681" />
+    <state width="2027" height="313" key="GridCell.Tab.0.left" timestamp="1588853924681">
+      <screen x="0" y="0" width="2048" height="1112" />
+    </state>
+    <state width="2027" height="313" key="GridCell.Tab.0.left/635.1440.1536.824/0.0.2048.1112@0.0.2048.1112" timestamp="1588853924681" />
+    <state width="2027" height="313" key="GridCell.Tab.0.right" timestamp="1588853924681">
+      <screen x="0" y="0" width="2048" height="1112" />
+    </state>
+    <state width="2027" height="313" key="GridCell.Tab.0.right/635.1440.1536.824/0.0.2048.1112@0.0.2048.1112" timestamp="1588853924681" />
+  </component>
+</project>
