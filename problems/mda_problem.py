@@ -216,12 +216,12 @@ class MDAProblem(GraphProblem):
             if new_matoshim >= 0 and new_capacity >= 0:
 
                 # build the params for state of after visiting the apartment
-                new_tests_on_ambulance = state_to_expand.tests_on_ambulance | {apartment}
-
+                new_tests_on_ambulance = set(state_to_expand.tests_on_ambulance)
+                new_tests_on_ambulance.add(apartment)
 
                 # create the new successor state after visiting the apartment
                 successor_state = MDAState(apartment,
-                                           new_tests_on_ambulance,
+                                           frozenset(new_tests_on_ambulance),
                                            state_to_expand.tests_transferred_to_lab,
                                            new_matoshim,
                                            state_to_expand.visited_labs)
@@ -229,7 +229,7 @@ class MDAProblem(GraphProblem):
                 visit_cost = self.get_operator_cost(state_to_expand, successor_state)
 
                 # successor state, the cost of the applied operator and its name
-                yield OperatorResult(successor_state, visit_cost, 'visit' + apartment.reporter_name)
+                yield OperatorResult(successor_state, visit_cost, 'visit ' + apartment.reporter_name)
 
         for lab in self.problem_input.laboratories:
 
@@ -295,6 +295,8 @@ class MDAProblem(GraphProblem):
         assert isinstance(state, MDAState)
 
         is_in_lab = isinstance(state.current_site, Laboratory) #consider issubset -Lisar
+
+        # never true
         all_tests_taken = set(self.problem_input.reported_apartments) == set(state.tests_transferred_to_lab)
 
         # final state is when all apartments are visited and transferred to lab
@@ -323,7 +325,9 @@ class MDAProblem(GraphProblem):
         visited = state.tests_on_ambulance
         transferred = state.tests_transferred_to_lab
 
-        return set(self.problem_input.reported_apartments) - {visited | transferred}
+        all = set(self.problem_input.reported_apartments)
+        not_visited = all - visited
+        return not_visited - transferred
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
@@ -335,7 +339,8 @@ class MDAProblem(GraphProblem):
             Use the method `self.get_reported_apartments_waiting_to_visit(state)`.
             Use python's `sorted(..., key=...)` function.
         """
-        remaining_junks = set(e.location for e in self.get_reported_apartments_waiting_to_visit(state)) | {state.current_location}
+        remaining_junks = set(e.location for e in self.get_reported_apartments_waiting_to_visit(state)) | \
+                          {state.current_location}
 
         # take the second element for sort
         def indices(aprt: Junction):
