@@ -240,6 +240,7 @@ class MDAProblem(GraphProblem):
             # check CanVisit for the current lab
             if not is_visited_lab or tests_on_ambulance > 0:
 
+                # first time in lab
                 if not is_visited_lab:
                     # calc the new matoshim taken from lab
                     new_matoshim = state_to_expand.nr_matoshim_on_ambulance + lab.max_nr_matoshim
@@ -253,7 +254,8 @@ class MDAProblem(GraphProblem):
                     new_visited_labs = state_to_expand.visited_labs
 
                 # calc the new transfered tests to labs
-                new_transferred = state_to_expand.tests_transferred_to_lab | {state_to_expand.tests_on_ambulance}
+                #new_transferred = frozenset(set(state_to_expand.tests_transferred_to_lab).union(set(state_to_expand.tests_on_ambulance)))
+                new_transferred = state_to_expand.tests_transferred_to_lab | state_to_expand.tests_on_ambulance
 
                 # create the new successor state after visiting the apartment
                 successor_state = MDAState(lab, frozenset(), new_transferred, new_matoshim,
@@ -297,7 +299,7 @@ class MDAProblem(GraphProblem):
 
         # final state is when all apartments are visited and transferred to lab
         return is_in_lab and all_tests_taken and frozenset() == state.tests_on_ambulance and\
-           (state.nr_matoshim_on_ambulance >= 0) and state.visited_labs.issubset(self.problem_input.laboratories)
+               (state.nr_matoshim_on_ambulance >= 0) and state.visited_labs.issubset(self.problem_input.laboratories)
 
 
     def get_zero_cost(self) -> Cost:

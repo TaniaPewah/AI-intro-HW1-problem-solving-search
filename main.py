@@ -14,6 +14,9 @@ streets_map = StreetsMap.load_from_csv(Consts.get_data_file_path("tlv_streets_ma
 Consts.set_seed()
 
 
+
+
+
 # --------------------------------------------------------------------
 # ------------------------ StreetsMap Problem ------------------------
 # --------------------------------------------------------------------
@@ -123,7 +126,7 @@ def toy_map_problem_experiments():
     print(res)
 
     # Ex.12 TODO
-    #run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
+    run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
 
 
 # --------------------------------------------------------------------
