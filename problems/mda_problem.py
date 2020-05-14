@@ -95,7 +95,7 @@ class MDAState(GraphProblemState):
         This method returns the total number of of tests that are stored on the ambulance in this state.
         [Ex.13]:
         """
-        return sum(test.ApartmentWithSymptomsReport.roommates for test in self.tests_on_ambulance)
+        return sum(apartment.nr_roommates for apartment in self.tests_on_ambulance)
 
 class MDAOptimizationObjective(Enum):
     Distance = 'Distance'
@@ -176,7 +176,7 @@ class MDAProblem(GraphProblem):
         The `Succ` function is defined by the problem operators as shown in class.
         The MDA problem operators are defined in the assignment instructions.
         It receives a state and iterates over its successor states.
-        Notice that this its return type is an *Iterator*. It means that this function is not
+        Notice that its return type is an *Iterator*. It means that this function is not
          a regular function, but a `generator function`. Hence, it should be implemented using
          the `yield` statement.
         For each successor, an object of type `OperatorResult` is yielded. This object describes the
@@ -201,12 +201,8 @@ class MDAProblem(GraphProblem):
 
         assert isinstance(state_to_expand, MDAState)
 
-        # find the junction of the current state
-        junction_from = state_to_expand.current_location
-
         # for every apartment waiting to be visited
-        for apartment in self.get_reported_apartments_waiting_to_visit():
-
+        for apartment in self.get_reported_apartments_waiting_to_visit(state_to_expand):
 
             # there is enough matoshim to test the apartment
             new_matoshim = state_to_expand.nr_matoshim_on_ambulance - apartment.nr_roommates
@@ -232,25 +228,44 @@ class MDAProblem(GraphProblem):
                 # calculate the cost to get to it
                 visit_cost = self.get_operator_cost(state_to_expand, successor_state)
 
+                # successor state, the cost of the applied operator and its name
+                yield OperatorResult(successor_state, visit_cost, apartment.reporter_name)
+
         for lab in self.problem_input.laboratories:
 
             tests_on_ambulance = state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance()
 
+            is_visited_lab = state_to_expand.visited_labs.__contains__(lab)
+
             # check CanVisit for the current lab
-            if not state_to_expand.visited_labs.__contains__(lab) or tests_on_ambulance > 0:
+            if (not is_visited_lab) or tests_on_ambulance > 0:
 
                 # add the lab to visited labs
+                # build the params for state of after visiting the apartment
+                new_visited_labs = set(state_to_expand.visited_labs)
+                new_visited_labs.add(lab)
 
                 # calc the new transfered tests to labs
+                new_transferred = set(state_to_expand.tests_transferred_to_lab)
+                new_transferred.add(state_to_expand.tests_on_ambulance)
 
                 # calc the new matoshim taken from lab
+                if not is_visited_lab:
+                    new_matoshim = state_to_expand.nr_matoshim_on_ambulance + lab.max_nr_matoshim
+                else:
+                    new_matoshim = state_to_expand.nr_matoshim_on_ambulance
 
                 # create the new successor state after visiting the apartment
-                # successor_state = MDAState(lab.location,
+                successor_state = MDAState(lab.location, frozenset([]), frozenset(new_transferred), new_matoshim,
+                                           frozenset(new_visited_labs))
 
                 # calculate the cost to get to it
                 visit_cost = self.get_operator_cost(state_to_expand, successor_state)
-        raise NotImplementedError  # TODO: remove this line!
+
+                lab_name = "go to lab " + str(lab.lab_id)
+
+                # successor state, the cost of the applied operator and its name
+                yield OperatorResult(successor_state, visit_cost, lab_name)
 
 
     def get_operator_cost(self, prev_state: MDAState, succ_state: MDAState) -> MDACost:
@@ -260,7 +275,9 @@ class MDAProblem(GraphProblem):
         Use the formal MDA problem's operator costs definition presented in the assignment-instructions.
         [Ex.13]:
         """
-        return self.map_distance_finder.get_map_cost_between(prev_state.current_location, succ_state.current_location)
+        distance_cost = self.map_distance_finder.get_map_cost_between(prev_state.current_location,
+                                                                      succ_state.current_location)
+        return MDACost(distance_cost)
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
@@ -270,10 +287,15 @@ class MDAProblem(GraphProblem):
          In order to create a set from some other collection (list/tuple) you can just `set(some_other_collection)`.
         """
         assert isinstance(state, MDAState)
-        all_patients = 0
-        for apt in self.problem_input.reported_apartments:
-            all_patients += apt.nr_roommates
-        return all_patients == state.tests_transferred_to_lab
+
+        is_in_lab = isinstance(state.current_site, Laboratory)
+        all_tests_taken = set(self.problem_input.reported_apartments) == set(state.tests_transferred_to_lab)
+
+        # final state is when all apartments are visited and transferred to lab
+        if is_in_lab and all_tests_taken and state.tests_on_ambulance is None:
+            return True
+        else:
+            return False
 
     def get_zero_cost(self) -> Cost:
         """
@@ -289,7 +311,10 @@ class MDAProblem(GraphProblem):
         This method returns a set of all reported-apartments that haven't been visited yet.
         [Ex.13]:
         """
-        return set(set(self.problem_input.reported_apartments) - set(state.tests_on_ambulance))
+
+        visited = set(state.tests_on_ambulance)
+        transferred = set(state.tests_transferred_to_lab)
+        return set(self.problem_input.reported_apartments) - visited - transferred
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
