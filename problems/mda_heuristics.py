@@ -43,13 +43,15 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
         """
         assert isinstance(self.problem, MDAProblem)
         assert isinstance(state, MDAState)
-
         all_certain_junctions_in_remaining_ambulance_path = \
             self.problem.get_all_certain_junctions_in_remaining_ambulance_path(state)
         if len(all_certain_junctions_in_remaining_ambulance_path) < 2:
             return 0
 
-        return 10  # TODO: modify this line.
+        return max(self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2)
+                   for j1 in all_certain_junctions_in_remaining_ambulance_path
+                   for j2 in all_certain_junctions_in_remaining_ambulance_path
+                   if j1 != j2)
 
 
 class MDASumAirDistHeuristic(HeuristicFunction):

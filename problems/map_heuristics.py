@@ -20,8 +20,7 @@ class AirDistHeuristic(HeuristicFunction):
         """
         assert isinstance(self.problem, MapProblem)
         assert isinstance(state, MapState)
-        
-        target_id = self.problem.target_junction_id
-        target_junc = self.problem.streets_map[target_id]
-        
-        return self.problem.streets_map[state.junction_id].calc_air_distance_from(target_junc)
+
+        target_junction = self.problem.streets_map[self.problem.target_junction_id]
+        states_junction = self.problem.streets_map[state.junction_id]
+        return target_junction.calc_air_distance_from(states_junction)

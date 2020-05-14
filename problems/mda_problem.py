@@ -216,48 +216,48 @@ class MDAProblem(GraphProblem):
             if new_matoshim >= 0 and new_capacity >= 0:
 
                 # build the params for state of after visiting the apartment
-                new_tests_on_ambulance = set(state_to_expand.tests_on_ambulance)
-                new_tests_on_ambulance.add(apartment)
+                new_tests_on_ambulance = state_to_expand.tests_on_ambulance | {apartment}
+
 
                 # create the new successor state after visiting the apartment
-                successor_state = MDAState(apartment.location,
-                                           frozenset(new_tests_on_ambulance),
-                                           frozenset(state_to_expand.tests_transferred_to_lab),
+                successor_state = MDAState(apartment,
+                                           new_tests_on_ambulance,
+                                           state_to_expand.tests_transferred_to_lab,
                                            new_matoshim,
                                            state_to_expand.visited_labs)
                 # calculate the cost to get to it
                 visit_cost = self.get_operator_cost(state_to_expand, successor_state)
 
                 # successor state, the cost of the applied operator and its name
-                yield OperatorResult(successor_state, visit_cost, apartment.reporter_name)
+                yield OperatorResult(successor_state, visit_cost, 'visit' + apartment.reporter_name)
 
         for lab in self.problem_input.laboratories:
 
             tests_on_ambulance = state_to_expand.get_total_nr_tests_taken_and_stored_on_ambulance()
 
-            is_visited_lab = state_to_expand.visited_labs.__contains__(lab)
+            is_visited_lab = lab in state_to_expand.visited_labs
 
             # check CanVisit for the current lab
-            if (not is_visited_lab) or tests_on_ambulance > 0:
+            if not is_visited_lab or tests_on_ambulance > 0:
 
-                # add the lab to visited labs
-                # build the params for state of after visiting the apartment
-                new_visited_labs = set(state_to_expand.visited_labs)
-                new_visited_labs.add(lab)
-
-                # calc the new transfered tests to labs
-                new_transferred = set(state_to_expand.tests_transferred_to_lab)
-                new_transferred.add(state_to_expand.tests_on_ambulance)
-
-                # calc the new matoshim taken from lab
                 if not is_visited_lab:
+                    # calc the new matoshim taken from lab
                     new_matoshim = state_to_expand.nr_matoshim_on_ambulance + lab.max_nr_matoshim
+                    # add the lab to visited labs
+                    new_visited_labs = state_to_expand.visited_labs | {lab}
+
+                    #print("visited in " + str(len(state_to_expand.visited_labs)) + "out of " + str(len(self.problem_input.laboratories)) + " labs")
+
                 else:
                     new_matoshim = state_to_expand.nr_matoshim_on_ambulance
+                    new_visited_labs = state_to_expand.visited_labs
+
+                # calc the new transfered tests to labs
+                new_transferred = state_to_expand.tests_transferred_to_lab | {state_to_expand.tests_on_ambulance}
 
                 # create the new successor state after visiting the apartment
-                successor_state = MDAState(lab.location, frozenset([]), frozenset(new_transferred), new_matoshim,
-                                           frozenset(new_visited_labs))
+                successor_state = MDAState(lab, frozenset(), new_transferred, new_matoshim,
+                                           new_visited_labs)
 
                 # calculate the cost to get to it
                 visit_cost = self.get_operator_cost(state_to_expand, successor_state)
@@ -266,7 +266,6 @@ class MDAProblem(GraphProblem):
 
                 # successor state, the cost of the applied operator and its name
                 yield OperatorResult(successor_state, visit_cost, lab_name)
-
 
     def get_operator_cost(self, prev_state: MDAState, succ_state: MDAState) -> MDACost:
         """
@@ -277,7 +276,12 @@ class MDAProblem(GraphProblem):
         """
         distance_cost = self.map_distance_finder.get_map_cost_between(prev_state.current_location,
                                                                       succ_state.current_location)
-        return MDACost(distance_cost)
+
+        if(distance_cost is None):
+            return MDACost(float('inf'), float('inf'), self.optimization_objective)
+
+        return MDACost(distance_cost, prev_state.get_total_nr_tests_taken_and_stored_on_ambulance() *
+                       distance_cost, self.optimization_objective)
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
@@ -288,14 +292,13 @@ class MDAProblem(GraphProblem):
         """
         assert isinstance(state, MDAState)
 
-        is_in_lab = isinstance(state.current_site, Laboratory)
+        is_in_lab = isinstance(state.current_site, Laboratory) #consider issubset -Lisar
         all_tests_taken = set(self.problem_input.reported_apartments) == set(state.tests_transferred_to_lab)
 
         # final state is when all apartments are visited and transferred to lab
-        if is_in_lab and all_tests_taken and state.tests_on_ambulance is None:
-            return True
-        else:
-            return False
+        return is_in_lab and all_tests_taken and frozenset() == state.tests_on_ambulance and\
+           (state.nr_matoshim_on_ambulance >= 0) and state.visited_labs.issubset(self.problem_input.laboratories)
+
 
     def get_zero_cost(self) -> Cost:
         """
@@ -311,10 +314,14 @@ class MDAProblem(GraphProblem):
         This method returns a set of all reported-apartments that haven't been visited yet.
         [Ex.13]:
         """
+        #visited = set(state.tests_on_ambulance)
+        #transferred = set(state.tests_transferred_to_lab)
+        #return set(self.problem_input.reported_apartments) - visited - transferred
 
-        visited = set(state.tests_on_ambulance)
-        transferred = set(state.tests_transferred_to_lab)
-        return set(self.problem_input.reported_apartments) - visited - transferred
+        visited = state.tests_on_ambulance
+        transferred = state.tests_transferred_to_lab
+
+        return set(self.problem_input.reported_apartments) - {visited | transferred}
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
@@ -326,4 +333,11 @@ class MDAProblem(GraphProblem):
             Use the method `self.get_reported_apartments_waiting_to_visit(state)`.
             Use python's `sorted(..., key=...)` function.
         """
-        raise NotImplementedError  # TODO: remove this line!
+        remaining_junks = set(e.location for e in self.get_reported_apartments_waiting_to_visit(state)) | {state.current_location}
+
+        # take the second element for sort
+        def indices(aprt: Junction):
+            return aprt.index
+
+        #TODOOO check ascending order
+        return sorted(remaining_junks, key=indices)

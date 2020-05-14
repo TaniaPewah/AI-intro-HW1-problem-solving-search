@@ -39,7 +39,7 @@ def plot_distance_and_expanded_wrt_weight_figure(
     # See documentation here:
     # https://matplotlib.org/api/_as_gen/matplotlib.axes.Axes.plot.html
     # You can also Google for additional examples.
-    p1, = ax1.plot(weights, total_cost, '-b')  # TODO: pass the relevant params instead of `...`.
+    p1, = ax1.plot(weights, total_cost, '-b', label='Solution cost')  # TODO: pass the relevant params instead of `...`.
 
     # ax1: Make the y-axis label, ticks and tick labels match the line color.
     ax1.set_ylabel('Solution cost', color='b')
@@ -49,7 +49,7 @@ def plot_distance_and_expanded_wrt_weight_figure(
     # Create another axis for the #expanded curve.
     ax2 = ax1.twinx()
 
-    p2, = ax2.plot(weights, total_nr_expanded, '-r')  # TODO: pass the relevant params instead of `...`.
+    p2, = ax2.plot(weights, total_nr_expanded, '-r', label='#Expanded states')  # TODO: pass the relevant params instead of `...`.
 
     # ax2: Make the y-axis label, ticks and tick labels match the line color.
     ax2.set_ylabel('#Expanded states', color='r')
@@ -122,8 +122,8 @@ def toy_map_problem_experiments():
     res = a_star.solve_problem(toy_map_problem)
     print(res)
 
-    # Ex.12
-    run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
+    # Ex.12 TODO
+    #run_astar_for_weights_in_range(AirDistHeuristic, toy_map_problem)
 
 
 # --------------------------------------------------------------------
@@ -161,9 +161,9 @@ def basic_mda_problem_experiments():
     # TODO: create an instance of `UniformCost`, solve the `small_mda_problem_with_distance_cost`
     #       with it and print the results.
 
-    uc = UniformCost()
-    res = uc.solve_problem(small_mda_problem_with_distance_cost)
-    print(res)
+    #uc = UniformCost()
+    #res = uc.solve_problem(small_mda_problem_with_distance_cost)
+    #print(res)
 
 
 def mda_problem_with_astar_experiments():
@@ -175,7 +175,10 @@ def mda_problem_with_astar_experiments():
     # Ex.17
     # TODO: create an instance of `AStar` with the `MDAMaxAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+
+    a_star = AStar(MDAMaxAirDistHeuristic)
+    res = a_star.solve_problem(moderate_mda_problem_with_distance_cost)
+    print(res)
 
     # Ex.20
     # TODO: create an instance of `AStar` with the `MDASumAirDistHeuristic`,
