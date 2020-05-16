@@ -14,8 +14,6 @@ streets_map = StreetsMap.load_from_csv(Consts.get_data_file_path("tlv_streets_ma
 Consts.set_seed()
 
 
-      
-
 
 # --------------------------------------------------------------------
 # ------------------------ StreetsMap Problem ------------------------
@@ -163,9 +161,9 @@ def basic_mda_problem_experiments():
     # TODO: create an instance of `UniformCost`, solve the `small_mda_problem_with_distance_cost`
     #       with it and print the results.
 
-    uc = UniformCost()
-    res = uc.solve_problem(small_mda_problem_with_distance_cost)
-    print(res)
+    #uc = UniformCost()
+    #res = uc.solve_problem(small_mda_problem_with_distance_cost)
+    #print(res)
 
 
 def mda_problem_with_astar_experiments():
@@ -178,20 +176,26 @@ def mda_problem_with_astar_experiments():
     # TODO: create an instance of `AStar` with the `MDAMaxAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
 
-    a_star = AStar(MDAMaxAirDistHeuristic)
-    res = a_star.solve_problem(moderate_mda_problem_with_distance_cost)
-    print(res)
+    #a_star = AStar(MDAMaxAirDistHeuristic)
+    #res = a_star.solve_problem(moderate_mda_problem_with_distance_cost)
+    #print(res)
 
     # Ex.20
     # TODO: create an instance of `AStar` with the `MDASumAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
+
+    # a_star = AStar(MDASumAirDistHeuristic)
+    # res = a_star.solve_problem(moderate_mda_problem_with_distance_cost)
+    # print(res)
+
 
     # Ex.23
     # TODO: create an instance of `AStar` with the `MDAMSTAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
-    exit()  # TODO: remove!
 
+    a_star = AStar(MDAMSTAirDistHeuristic)
+    res = a_star.solve_problem(moderate_mda_problem_with_distance_cost)
+    print(res)
 
 def mda_problem_with_weighted_astar_experiments():
     print()
