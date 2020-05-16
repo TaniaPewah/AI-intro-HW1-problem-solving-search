@@ -253,7 +253,7 @@ class MDAProblem(GraphProblem):
                     new_matoshim = state_to_expand.nr_matoshim_on_ambulance
                     new_visited_labs = state_to_expand.visited_labs
 
-                # calc the new transfered tests to labs
+                # calc the new transferred tests to labs
                 #new_transferred = frozenset(set(state_to_expand.tests_transferred_to_lab).union(set(state_to_expand.tests_on_ambulance)))
                 new_transferred = state_to_expand.tests_transferred_to_lab | state_to_expand.tests_on_ambulance
 
@@ -264,7 +264,7 @@ class MDAProblem(GraphProblem):
                 # calculate the cost to get to it
                 visit_cost = self.get_operator_cost(state_to_expand, successor_state)
 
-                lab_name = "go to lab " + str(lab.lab_id)
+                lab_name = "go to lab " + str(lab.name)
 
                 # successor state, the cost of the applied operator and its name
                 yield OperatorResult(successor_state, visit_cost, lab_name)

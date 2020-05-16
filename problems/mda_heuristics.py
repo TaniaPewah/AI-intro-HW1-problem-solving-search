@@ -51,7 +51,8 @@ class MDAMaxAirDistHeuristic(HeuristicFunction):
         return max(self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2)
                    for j1 in all_certain_junctions_in_remaining_ambulance_path
                    for j2 in all_certain_junctions_in_remaining_ambulance_path
-                   if j1 != j2)
+                   if j1.index != j2.index)         # consider: " if j1.index < j2.index "
+
 
 
 class MDASumAirDistHeuristic(HeuristicFunction):
@@ -89,26 +90,30 @@ class MDASumAirDistHeuristic(HeuristicFunction):
         if len(all_certain_junctions_in_remaining_ambulance_path) < 2:
             return 0
 
-        remaining_nr_juncs = len(all_certain_junctions_in_remaining_ambulance_path)
+        remaining_juncs = len(all_certain_junctions_in_remaining_ambulance_path)
         sum = 0
         min_junc = None
+        min_val = float('inf')
 
-        all_certain_junctions_in_remaining_ambulance_path.remove(state.current_location)
-        for i in range(remaining_nr_juncs - 1):
-            curr_junc = state.current_location
+        if isinstance(state.current_site, Junction):
+            curr_junc = state.current_site
+        else:
+            curr_junc = state.current_site.location
+
+        for i in range(remaining_juncs):
+
             for junction in all_certain_junctions_in_remaining_ambulance_path:
-                minimum = min(self.cached_air_distance_calculator.get_air_distance_between_junctions(curr_junc, junction)
-                        for junction in all_certain_junctions_in_remaining_ambulance_path
-                        if junction != curr_junc)
-                this_dist = self.cached_air_distance_calculator.get_air_distance_between_junctions(curr_junc, junction)
-
-                if this_dist == minimum:
+                curr_dist = self.cached_air_distance_calculator.get_air_distance_between_junctions(curr_junc, junction)
+                if curr_dist < min_val:
+                    min_val = curr_dist
                     min_junc = junction
-                    sum += minimum
-                    continue
             all_certain_junctions_in_remaining_ambulance_path.remove(min_junc)
-
+            sum += min_val
+            curr_junc = min_junc
+            min_junc = None
+            min_val = float('inf')
         return sum
+
 
 class MDAMSTAirDistHeuristic(HeuristicFunction):
     heuristic_name = 'MDA-MST-AirDist'
@@ -150,13 +155,11 @@ class MDAMSTAirDistHeuristic(HeuristicFunction):
 
         for j1 in junctions:
             for j2 in junctions:
-                if j1 != j2:
+                if j1.index != j2.index:
                     curr_weight = self.cached_air_distance_calculator.get_air_distance_between_junctions(j1, j2)
                     new_graph.add_edge(j1, j2, weight=curr_weight)
 
-        get_mst = nx.minimum_spanning_tree(new_graph)
-
-        return get_mst.size(weight='weight')
+        return nx.minimum_spanning_tree(new_graph).size(weight='weight')
 
 
 class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
@@ -193,13 +196,13 @@ class MDATestsTravelDistToNearestLabHeuristic(HeuristicFunction):
             Returns the distance between `junction` and the laboratory that is closest to `junction`.
             """
             return min(self.cached_air_distance_calculator.get_air_distance_between_junctions(junction, lab.location)
-                for lab in labs_list
-                if lab != junction)
+                       for lab in labs_list
+                       if lab != junction)
 
         summ = 0
         apartments = self.problem.get_reported_apartments_waiting_to_visit(state)
         for apartment in apartments:
             min_dist_from_lab = air_dist_to_closest_lab(apartment.location)
             summ += apartment.nr_roommates * min_dist_from_lab
-
+        summ += state.get_total_nr_tests_taken_and_stored_on_ambulance() * air_dist_to_closest_lab(state.current_location)
         return summ
