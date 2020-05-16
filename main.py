@@ -14,7 +14,7 @@ streets_map = StreetsMap.load_from_csv(Consts.get_data_file_path("tlv_streets_ma
 Consts.set_seed()
 
 
-
+      
 
 
 # --------------------------------------------------------------------
