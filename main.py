@@ -108,7 +108,7 @@ def run_astar_for_weights_in_range(heuristic_type: HeuristicFunctionType, proble
 def toy_map_problem_experiments():
     print()
     print('Solve the map problem.')
-
+   
     # Ex.8
     toy_map_problem = MapProblem(streets_map, 54, 549)
     uc = UniformCost()
