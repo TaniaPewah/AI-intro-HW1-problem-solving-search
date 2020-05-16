@@ -193,9 +193,9 @@ def mda_problem_with_astar_experiments():
     # TODO: create an instance of `AStar` with the `MDAMSTAirDistHeuristic`,
     #       solve the `moderate_mda_problem_with_distance_cost` with it and print the results.
 
-    a_star = AStar(MDAMSTAirDistHeuristic)
-    res = a_star.solve_problem(moderate_mda_problem_with_distance_cost)
-    print(res)
+    # a_star = AStar(MDAMSTAirDistHeuristic)
+    # res = a_star.solve_problem(moderate_mda_problem_with_distance_cost)
+    # print(res)
 
 def mda_problem_with_weighted_astar_experiments():
     print()
@@ -208,13 +208,13 @@ def mda_problem_with_weighted_astar_experiments():
     # TODO: Call here the function `run_astar_for_weights_in_range()`
     #       with `MDAMSTAirDistHeuristic`
     #       over the `small_mda_problem_with_distance_cost`.
-    exit()  # TODO: remove!
+    #run_astar_for_weights_in_range(MDAMSTAirDistHeuristic, small_mda_problem_with_distance_cost)
 
     # Ex.25
     # TODO: Call here the function `run_astar_for_weights_in_range()`
     #       with `MDASumAirDistHeuristic`
     #       over the `moderate_mda_problem_with_distance_cost`.
-    exit()  # TODO: remove!
+    #run_astar_for_weights_in_range(MDASumAirDistHeuristic, moderate_mda_problem_with_distance_cost)
 
 
 def multiple_objectives_mda_problem_experiments():
@@ -227,7 +227,10 @@ def multiple_objectives_mda_problem_experiments():
     # Ex.31
     # TODO: create an instance of `AStar` with the `MDATestsTravelDistToNearestLabHeuristic`,
     #       solve the `moderate_mda_problem_with_tests_travel_dist_cost` with it and print the results.
-    exit()  # TODO: remove!
+    a_star = AStar(MDATestsTravelDistToNearestLabHeuristic)
+    res = a_star.solve_problem(moderate_mda_problem_with_tests_travel_dist_cost)
+    print(res)
+
 
     # Ex.34
     # TODO: Implement the algorithm A_2 described in this exercise in the assignment instructions.
