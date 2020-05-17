@@ -91,7 +91,7 @@ class AStarEpsilon(AStar):
         focal = []
         for i in range(len(self.open)):
             node = self.open.pop_next_node()
-            if (node.expanding_priority <= maximum_expanding_priority and  # comeBACK HERE TO PASS TESTS
+            if (node.expanding_priority <= maximum_expanding_priority and
                     (self.max_focal_size is None or len(focal) <= self.max_focal_size)):
                 focal.append(node)
             else:
