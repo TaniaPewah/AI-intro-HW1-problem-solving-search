@@ -82,53 +82,44 @@ class AStarEpsilon(AStar):
 
         # Find the minimum expanding-priority value in the `open` queue:
         # Notice: open is sorted according to expanding_priority (min heap) so the first node to pop is
-        node = self.open.pop_next_node()
+        node = self.open.peek_next_node()
         min_expanding_priority = node.expanding_priority
         maximum_expanding_priority = min_expanding_priority * (1 + self.focal_epsilon)
-        self.open.push_node(node)
 
         # create focal:
         temp_qu = []
         focal = []
         for i in range(len(self.open)):
             node = self.open.pop_next_node()
-            if not (node.expanding_priority <= maximum_expanding_priority and
-                    self.max_focal_size is not None or len(focal) <= self.max_focal_size):
-                continue
-            focal.append(node)
-            temp_qu.append(node)
+            if (node.expanding_priority <= maximum_expanding_priority and  # comeBACK HERE TO PASS TESTS
+                    (self.max_focal_size is None or len(focal) <= self.max_focal_size)):
+                focal.append(node)
+            else:
+                temp_qu.append(node)
 
-        for i in range(len(temp_qu)):
-            self.open.push_node(temp_qu.pop())
+        # copy all nodes back to OPEN, but keep temp and focal as they are
+        # Note:  the extracted node is the only one to pop out of open, all others remain.
+        for i in temp_qu:
+            self.open.push_node(i)
+        for k in focal:
+            self.open.push_node(k)
 
         # remove min index from focal and add to close:
         prio_arr = []
-        for i in range(len(focal)):
-            node = focal.pop()
+        for node in focal:
             prio = self.within_focal_priority_function(node, problem, self)
             prio_arr.append(prio)
-            temp_qu.append(node)
-
-        for i in range(len(temp_qu)):
-            focal.append(temp_qu.pop())
 
         min_item_index = np.argmin(prio_arr)
         index_to_remove = int(min_item_index)
         res = focal.pop(index_to_remove)
-        self.close.add_node(res)
 
-        # Note:  the extracted node is the only one to pop out of open, all others remain.
-        assert len(temp_qu) == 0
-        for i in range(len(self.open)):
-            node = self.open.pop_next_node()
-            if node == res:
-                continue
-            else:
-                temp_qu.append(node)
+        # remove this res fro OPEN
+        self.open.extract_node(res)
 
-        if len(temp_qu) > 0:
-            for i in range(len(temp_qu)):
-                self.open.push_node(temp_qu.pop())
+        if self.use_close:
+            self.close.add_node(res)
+        focal.append(res)
 
         # print(res.state.__str__())
         # print()
