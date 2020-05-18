@@ -92,11 +92,11 @@ class AnytimeAStar(GraphProblemSolver):
                 total_nr_expanded_states += res.nr_expanded_states
                 max_nr_stored_states = max(max_nr_stored_states, res.max_nr_stored_states)
 
-                if res.is_solution_found and res.solution_g_cost < best_solution.solution_g_cost:
-                    best_solution = res
-                    # low_heuristic_weight = min(best_heuristic_weight, curr_w)
-                    high_heuristic_weight = max(best_heuristic_weight, curr_w)
-                    best_heuristic_weight = curr_w
+                if res.is_solution_found:
+                    if res.solution_g_cost < best_solution.solution_g_cost:
+                        best_solution = res
+                        best_heuristic_weight = curr_w
+                    high_heuristic_weight = curr_w
                 else:
                     low_heuristic_weight = curr_w
 
