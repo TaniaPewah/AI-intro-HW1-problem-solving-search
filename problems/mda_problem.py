@@ -318,16 +318,14 @@ class MDAProblem(GraphProblem):
         This method returns a set of all reported-apartments that haven't been visited yet.
         [Ex.13]:
         """
-        #visited = set(state.tests_on_ambulance)
-        #transferred = set(state.tests_transferred_to_lab)
-        #return set(self.problem_input.reported_apartments) - visited - transferred
 
+        all = set(self.problem_input.reported_apartments)
         visited = state.tests_on_ambulance
         transferred = state.tests_transferred_to_lab
 
-        all = set(self.problem_input.reported_apartments)
-        not_visited = all - visited
-        return not_visited - transferred
+        # not_visited = all - visited
+        # return not_visited - transferred
+        return all - set(transferred | visited)
 
     def get_all_certain_junctions_in_remaining_ambulance_path(self, state: MDAState) -> List[Junction]:
         """
